@@ -17,7 +17,7 @@ class patching(object):
         self.img_data=img_data
         self.patch_size=patch_size
         self.N_patch=N_patch
-        self.classes=[1,2,3,4,5]
+        self.classes=[1,2,3,5]
         #declare variables to enforce (padding=VALID) later on
         self.row=int((self.patch_size[0]-1)/2)
         self.col=int((self.patch_size[1]-1)/2)
