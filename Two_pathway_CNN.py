@@ -14,7 +14,7 @@ def Conv_network(X,weights,biases,dropout):
     Consturcts the two_pathway_CNN and returns label prediction for an input patch
     '''
     
-    classes=[1,2,3,4,5]    
+    classes=[1,2,3,5]    
     dropout=tf.constant(dropout,tf.float32)
 
     def Conv_local(self,X,w,b,P):
