@@ -18,7 +18,7 @@ import tensorflow as tf
 import nibabel as nib
 
 
-def pre_proc(file_path,file_name,std_per_slice=True):
+def pre_proc(file_path,file_name,std_per_slice=True,new_GT=True):
 
     def per_slice_std(img):
         '''
@@ -52,11 +52,11 @@ def pre_proc(file_path,file_name,std_per_slice=True):
     def GT(img_flair,img_seg):
         
         img_flair=tf.constant(img_flair.get_data())
-        img_seg=tf.constant(img_seg.get_data())
-        bool=tf.equal(img_flair,0)
-        Bkg=tf.constant([-1],tf.int32,shape=(240,240,155))  
-        Zeros=tf.zeros((240,240,155),tf.int32)  
-        New_seg=tf.cast(tf.where(bool, Bkg,Zeros),tf.int16)
+        img_seg=tf.cast(img_seg.get_data(),tf.int32)
+        bool=tf.not_equal(img_flair,0)
+        Bkg=tf.constant(0,tf.int32,shape=(240,240,155))  
+        Healthy=tf.constant(1,tf.int32,shape=(240,240,155))  
+        New_seg=tf.cast(tf.where(bool, Healthy,Bkg),tf.int32)
         New_seg=New_seg+img_seg
         print('New ground truth created')
         return New_seg
@@ -77,7 +77,10 @@ def pre_proc(file_path,file_name,std_per_slice=True):
     std_img_t1=std(img_t1)
     std_img_t1ce=std(img_t1ce)
     std_img_t2=std(img_t2)
-    new_img_seg=GT(img_flair,img_seg)
+    if new_GT==True:
+        new_img_seg=GT(img_flair,img_seg)
+    else:
+        new_img_seg=tf.constant(img_seg.get_data())
     
     #Load groud truth as 5th channel
     new_img_seg=tf.cast(tf.transpose(new_img_seg,[2,0,1]),tf.float32)
